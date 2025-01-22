@@ -10,4 +10,5 @@
     "data": ["security/res_groups.xml", "views/res_users.xml", "data/res_users.xml"],
     "license": "AGPL-3",
     "installable": True,
+    "depends": ["base"],
 }
