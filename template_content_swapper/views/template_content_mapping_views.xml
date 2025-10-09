@@ -35,7 +35,7 @@
                     name="type_frontend"
                     domain="[('report_id','=',False)]"
                 />
-                <group expand="0" string="Group By">
+                <group>
                     <filter
                         string="Report"
                         name="report"

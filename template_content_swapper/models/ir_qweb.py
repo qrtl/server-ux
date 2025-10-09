@@ -3,18 +3,22 @@
 
 import re
 
+from lxml import etree
 from markupsafe import Markup
 
 from odoo import api, models
-from odoo.tools.profiler import QwebTracker
 
 
 class IrQWeb(models.AbstractModel):
     _inherit = "ir.qweb"
 
-    @QwebTracker.wrap_render
     @api.model
-    def _render(self, template, values=None, **options):
+    def _render(
+        self,
+        template: int | str | etree._Element,
+        values: dict | None = None,
+        **options,
+    ) -> Markup:
         result = super()._render(template, values=values, **options)
         values = values or {}
         if not isinstance(template, str):
@@ -30,7 +34,7 @@ class IrQWeb(models.AbstractModel):
             lang_match = re.search(r'data-oe-lang="([^"]+)"', result_str)
             if lang_match:
                 lang_code = lang_match.group(1)
-        view = self.env["ir.ui.view"]._get(template)
+        view = self.env["ir.ui.view"]._get_template_view(template)
         content_mappings = (
             self.env["template.content.mapping"]
             .sudo()

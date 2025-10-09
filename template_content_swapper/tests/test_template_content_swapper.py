@@ -18,7 +18,7 @@ class TestTemplateStringSwapper(TransactionCase):
 
     def test_template_string_swapper(self):
         template = "web.external_layout"
-        view = self.view_obj._get(template).sudo()
+        view = self.view_obj._get_template_view(template).sudo()
         values = {"company": self.env.company, "report_type": "pdf", "o": view}
         result = self.view_obj._render_template(template, values)
         self.assertTrue("Page" in str(result))

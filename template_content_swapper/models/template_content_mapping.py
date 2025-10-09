@@ -53,7 +53,9 @@ class TemplateContentMapping(models.Model):
             rec.template_id = False
             if rec.report_id:
                 report_name = rec.report_id.report_name
-                rec.template_id = self.env["ir.ui.view"]._get(report_name).sudo()
+                rec.template_id = (
+                    self.env["ir.ui.view"]._get_template_view(report_name).sudo()
+                )
 
     def open_template_mapping(self):
         multi_lang = len(self.env["res.lang"].get_installed()) > 1
