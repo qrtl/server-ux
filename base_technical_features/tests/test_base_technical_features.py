@@ -1,5 +1,6 @@
 from lxml import etree
 
+from odoo import Command
 from odoo.exceptions import AccessError
 from odoo.tests import common
 
@@ -10,7 +11,7 @@ class TestBaseTechnicalFeatures(common.TransactionCase):
         features group """
         menu_obj = self.env["ir.ui.menu"].with_context(**{"ir.ui.menu.full_list": True})
         menu_id = menu_obj.search(
-            [("groups_id", "=", self.env.ref("base.group_no_one").id)], limit=1
+            [("group_ids", "=", self.env.ref("base.group_no_one").id)], limit=1
         ).id
         self.env.user.write({"technical_features": False})
         self.env.user._compute_show_technical_features()
@@ -29,7 +30,7 @@ class TestBaseTechnicalFeatures(common.TransactionCase):
                 .get_view(view_id=self.env.ref("base.view_users_form").id)["arch"]
                 .encode("utf-8")
             )
-            return xml.xpath('//div/group/field[@name="partner_id"]')
+            return xml.xpath('//group/field[@name="partner_id"]')
 
         self.env.user.write({"technical_features": False})
         self.assertEqual(len(get_partner_field()), 0)
@@ -43,7 +44,7 @@ class TestBaseTechnicalFeatures(common.TransactionCase):
             {
                 "name": "Test user technical features",
                 "login": "testusertechnicalfeatures",
-                "groups_id": [(6, 0, [])],
+                "group_ids": [Command.set([])],
             }
         )
         self.env.user._compute_show_technical_features()
@@ -54,5 +55,5 @@ class TestBaseTechnicalFeatures(common.TransactionCase):
             )
         with self.assertRaises(AccessError):
             user.write({"technical_features": True})
-        user.write({"groups_id": [(4, self.env.ref("base.group_no_one").id)]})
+        user.write({"group_ids": [Command.link(self.env.ref("base.group_no_one").id)]})
         self.env["res.users"].browse(user.id).sudo().write({"technical_features": True})
