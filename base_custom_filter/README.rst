@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 =============================================================
 Add custom filters in standard filters and group by dropdowns
 =============================================================
@@ -17,7 +13,7 @@ Add custom filters in standard filters and group by dropdowns
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fserver--ux-lightgray.png?logo=github
@@ -53,19 +49,26 @@ Configuration
 
    Search:
 
-      - Search Field (``name``)
-      - Filter Domain (``filter_domain``)
-      - User Groups (``groups``)
+      -  Search Field (``name``)
+      -  Filter Domain (``filter_domain``)
+      -  User Groups (``groups``)
 
    Filter:
 
-      - Domain (``domain``)
-      - User Groups (``groups``)
+      -  Domain (``domain``) - OR -
+      -  Date Field (``date_field``) - creates a date filter with period
+         options
+      -  User Groups (``groups``)
+
+      **Note:** For filter type, you must specify either Domain or Date
+      Field, but not both. Date filters automatically provide period
+      options like Today, This Week, This Month, This Quarter, and This
+      Year.
 
    Group By:
 
-      - Group By Field (field to be assigned to ``group_by`` context)
-      - User Groups (``groups``)
+      -  Group By Field (field to be assigned to ``group_by`` context)
+      -  User Groups (``groups``)
 
    See `the official
    documentation <https://www.odoo.com/documentation/16.0/developer/reference/backend/views.html#search>`__
@@ -102,19 +105,18 @@ Authors
 Contributors
 ------------
 
-- `ForgeFlow S.L. <https://www.forgeflow.com>`__:
+-  `ForgeFlow S.L. <https://www.forgeflow.com>`__:
 
-  - Jordi Masvidal
+   -  Jordi Masvidal
 
-- Ashish Hirpara
-  <`https://www.ashish-hirpara.com\\> <https://www.ashish-hirpara.com\>>`__
-- `Quartile <https://www.quartile.co>`__:
+-  Ashish Hirpara <https://www.ashish-hirpara.com>
+-  `Quartile <https://www.quartile.co>`__:
 
-  - Aung Ko Ko Lin
+   -  Aung Ko Ko Lin
 
-- `Kencove <https://www.kencove.com>`__:
+-  `Kencove <https://www.kencove.com>`__:
 
-  - Mohamed Alkobrosli
+   -  Mohamed Alkobrosli
 
 Maintainers
 -----------

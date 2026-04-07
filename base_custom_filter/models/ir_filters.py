@@ -2,7 +2,8 @@
 # Copyright 2021 ForgeFlow S.L. (https://www.forgeflow.com)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 from odoo.osv import expression
 
 
@@ -37,8 +38,54 @@ class IrFilters(models.Model):
         help="""Enter a filter domain expression if necessary.
         Example: [('default_code', 'ilike', self)]"""
     )
+    date_field = fields.Many2one(
+        comodel_name="ir.model.fields",
+        ondelete="cascade",
+        domain="[('model', '=', model_id), ('ttype', 'in', ['date', 'datetime'])]",
+        help="If set, creates a date filter with period options "
+        "(Today, This Week, This Month, etc.) instead of a domain filter. "
+        "Only applicable for filter type.",
+    )
     group_ids = fields.Many2many("res.groups", string="User Groups")
     group_id = fields.Many2one(comodel_name="ir.filters.group", string="Filter Group")
+
+    @api.constrains("type", "domain", "date_field")
+    def _check_filter_type_fields(self):
+        for record in self:
+            if record.type != "filter":
+                continue
+            has_domain = record.domain and record.domain != "[]"
+            if has_domain and record.date_field:
+                raise ValidationError(
+                    _(
+                        "Filter '%(name)s': You cannot set both Domain and "
+                        "Date Field. Please choose only one.",
+                        name=record.name,
+                    )
+                )
+            if not has_domain and not record.date_field:
+                raise ValidationError(
+                    _(
+                        "Filter '%(name)s': You must set either Domain or "
+                        "Date Field for filter type.",
+                        name=record.name,
+                    )
+                )
+
+    @api.onchange("type")
+    def _onchange_type_clear_date_field(self):
+        if self.type != "filter":
+            self.date_field = False
+
+    @api.onchange("domain")
+    def _onchange_domain_clear_date_field(self):
+        if self.domain and self.domain != "[]" and self.date_field:
+            self.date_field = False
+
+    @api.onchange("date_field")
+    def _onchange_date_field_clear_domain(self):
+        if self.date_field:
+            self.domain = "[]"
 
     @api.model
     def get_filters(

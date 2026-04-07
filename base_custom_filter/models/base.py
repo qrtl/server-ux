@@ -27,14 +27,15 @@ class Base(models.AbstractModel):
                     continue
                 node = arch.xpath("//search/separator[last()]")
                 if node:
-                    elem = etree.Element(
-                        "filter",
-                        {
-                            "name": f"ir_custom_filter_{custom_filter.id}",
-                            "string": custom_filter.name,
-                            "domain": custom_filter.domain,
-                        },
-                    )
+                    filter_attrs = {
+                        "name": f"ir_custom_filter_{custom_filter.id}",
+                        "string": custom_filter.name,
+                    }
+                    if custom_filter.date_field:
+                        filter_attrs["date"] = custom_filter.date_field.sudo().name
+                    else:
+                        filter_attrs["domain"] = custom_filter.domain
+                    elem = etree.Element("filter", filter_attrs)
                     node[0].addnext(elem)
         res["arch"] = etree.tostring(arch)
         return res
