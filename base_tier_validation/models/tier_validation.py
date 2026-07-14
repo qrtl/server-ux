@@ -444,8 +444,15 @@ class TierValidation(models.AbstractModel):
                     }
                 )
             if rec._allow_to_remove_reviews(vals):
-                rec.mapped("review_ids").unlink()
+                rec._remove_reviews()
         return super(TierValidation, self).write(vals)
+
+    def _remove_reviews(self):
+        """Remove the reviews when a validation cycle is reset.
+
+        Extracted as a hook so modules can change what happens to completed
+        reviews (e.g. archive them as history instead of deleting them)."""
+        self.review_ids.unlink()
 
     def _allow_to_remove_reviews(self, values):
         """Method for deciding whether the elimination of revisions is necessary."""
@@ -754,7 +761,7 @@ class TierValidation(models.AbstractModel):
                         .mapped("partner_id")
                         .ids
                     )
-                rec.mapped("review_ids").unlink()
+                rec._remove_reviews()
                 if to_update_counter:
                     self._update_counter({"review_deleted": True})
             if partners_to_notify_ids:
