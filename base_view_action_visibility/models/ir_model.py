@@ -22,6 +22,6 @@ class IrModel(models.Model):
         "model_id",
         "group_id",
         string="Delete Allowed Groups",
-        help="Restrict the 'Delete' action in form, tree, and kanban views to these groups. "
-        "Leave empty to allow all users to delete records.",
+        help="Restrict the 'Delete' action in form, list, and kanban views to "
+        "these groups. Leave empty to allow all users to delete records.",
     )

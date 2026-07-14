@@ -40,7 +40,7 @@ class TestViewActionVisibility(TransactionCase):
                 "delete_allowed_group_ids": [Command.clear()],
             }
         )
-        result = self.env["res.partner"].fields_view_get(view_type="form")
+        result = self.env["res.partner"].get_view(view_type="form")
         arch = etree.fromstring(result["arch"])
         self.assertIsNone(arch.get("duplicate"))
         self.assertIsNone(arch.get("delete"))
@@ -53,14 +53,14 @@ class TestViewActionVisibility(TransactionCase):
         result = (
             self.env["res.partner"]
             .with_user(self.user_in_group)
-            .fields_view_get(view_type="form")
+            .get_view(view_type="form")
         )
         arch = etree.fromstring(result["arch"])
         self.assertNotEqual(arch.get("duplicate"), "0")
         result = (
             self.env["res.partner"]
             .with_user(self.user_not_in_group)
-            .fields_view_get(view_type="form")
+            .get_view(view_type="form")
         )
         arch = etree.fromstring(result["arch"])
         self.assertEqual(arch.get("duplicate"), "0")
@@ -73,14 +73,14 @@ class TestViewActionVisibility(TransactionCase):
         result = (
             self.env["res.partner"]
             .with_user(self.user_in_group)
-            .fields_view_get(view_type="form")
+            .get_view(view_type="form")
         )
         arch = etree.fromstring(result["arch"])
         self.assertNotEqual(arch.get("delete"), "0")
         result = (
             self.env["res.partner"]
             .with_user(self.user_not_in_group)
-            .fields_view_get(view_type="form")
+            .get_view(view_type="form")
         )
         arch = etree.fromstring(result["arch"])
         self.assertEqual(arch.get("delete"), "0")
@@ -96,7 +96,7 @@ class TestViewActionVisibility(TransactionCase):
         result = (
             self.env["res.partner"]
             .with_user(self.user_in_group)
-            .fields_view_get(view_type="form")
+            .get_view(view_type="form")
         )
         arch = etree.fromstring(result["arch"])
         self.assertNotEqual(arch.get("duplicate"), "0")
@@ -104,37 +104,37 @@ class TestViewActionVisibility(TransactionCase):
         result = (
             self.env["res.partner"]
             .with_user(self.user_not_in_group)
-            .fields_view_get(view_type="form")
+            .get_view(view_type="form")
         )
         arch = etree.fromstring(result["arch"])
         self.assertEqual(arch.get("duplicate"), "0")
         self.assertEqual(arch.get("delete"), "0")
 
-    def test_delete_restriction_in_tree_view(self):
-        """Test delete action restriction applies to tree view"""
+    def test_delete_restriction_in_list_view(self):
+        """Test delete action restriction applies to list view"""
         self.partner_model.write(
             {"delete_allowed_group_ids": [Command.set([self.test_group.id])]}
         )
         result = (
             self.env["res.partner"]
             .with_user(self.user_in_group)
-            .fields_view_get(view_type="tree")
+            .get_view(view_type="list")
         )
         arch = etree.fromstring(result["arch"])
         self.assertNotEqual(arch.get("delete"), "0")
         result = (
             self.env["res.partner"]
             .with_user(self.user_not_in_group)
-            .fields_view_get(view_type="tree")
+            .get_view(view_type="list")
         )
         arch = etree.fromstring(result["arch"])
         self.assertEqual(arch.get("delete"), "0")
 
-    def test_duplicate_restriction_not_applied_in_tree_view(self):
+    def test_duplicate_restriction_not_applied_in_list_view(self):
         self.partner_model.write(
             {"duplicate_allowed_group_ids": [Command.set([self.test_group.id])]}
         )
-        result = self.env["res.partner"].fields_view_get(view_type="tree")
+        result = self.env["res.partner"].get_view(view_type="list")
         arch = etree.fromstring(result["arch"])
         self.assertIsNone(arch.get("duplicate"))
 
@@ -146,14 +146,14 @@ class TestViewActionVisibility(TransactionCase):
         result = (
             self.env["res.partner"]
             .with_user(self.user_in_group)
-            .fields_view_get(view_type="kanban")
+            .get_view(view_type="kanban")
         )
         arch = etree.fromstring(result["arch"])
         self.assertNotEqual(arch.get("delete"), "0")
         result = (
             self.env["res.partner"]
             .with_user(self.user_not_in_group)
-            .fields_view_get(view_type="kanban")
+            .get_view(view_type="kanban")
         )
         arch = etree.fromstring(result["arch"])
         self.assertEqual(arch.get("delete"), "0")
@@ -163,6 +163,6 @@ class TestViewActionVisibility(TransactionCase):
         self.partner_model.write(
             {"duplicate_allowed_group_ids": [Command.set([self.test_group.id])]}
         )
-        result = self.env["res.partner"].fields_view_get(view_type="kanban")
+        result = self.env["res.partner"].get_view(view_type="kanban")
         arch = etree.fromstring(result["arch"])
         self.assertIsNone(arch.get("duplicate"))

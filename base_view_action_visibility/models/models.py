@@ -3,7 +3,7 @@
 
 from lxml import etree
 
-from odoo import models
+from odoo import api, models
 
 
 class Base(models.AbstractModel):
@@ -16,16 +16,11 @@ class Base(models.AbstractModel):
         user_has_permission = bool(allowed_group_ids & user_groups)
         return not user_has_permission
 
-    def fields_view_get(
-        self, view_id=None, view_type="form", toolbar=False, submenu=False
-    ):
-        result = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu
-        )
-        ir_model = (
-            self.env["ir.model"].sudo().search([("model", "=", self._name)], limit=1)
-        )
-        if view_type not in ("form", "tree", "kanban") or not ir_model:
+    @api.model
+    def get_view(self, view_id=None, view_type="form", **options):
+        result = super().get_view(view_id=view_id, view_type=view_type, **options)
+        ir_model = self.env["ir.model"]._get(self._name)
+        if view_type not in ("form", "list", "kanban") or not ir_model:
             return result
         hide_duplicate = self._should_hide_action(ir_model.duplicate_allowed_group_ids)
         hide_delete = self._should_hide_action(ir_model.delete_allowed_group_ids)

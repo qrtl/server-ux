@@ -3,7 +3,7 @@
 {
     "name": "Base View Action Visibility",
     "summary": "Hide standard view actions (Duplicate, Delete) per model",
-    "version": "15.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Server tools",
     "website": "https://github.com/OCA/server-ux",
     "author": "Quartile, Odoo Community Association (OCA)",

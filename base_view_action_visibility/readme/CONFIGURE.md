@@ -8,5 +8,10 @@ To configure action visibility for a model:
       action in form views to only those groups. Leave empty to allow
       all users to duplicate.
     - Add groups to *Delete Allowed Groups* to restrict the delete
-      action in form, tree, and kanban views to only those groups. Leave
+      action in form, list, and kanban views to only those groups. Leave
       empty to allow all users to delete.
+
+Note: the restriction applies to every user who is not a member of the
+allowed groups, administrators included. If you restrict an action to a
+group you do not belong to, the button will be hidden for you as well.
+Add yourself to the allowed group to keep access.
