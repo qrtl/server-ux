@@ -1,7 +1,11 @@
 # Copyright 2024 Quartile (https://www.quartile.co)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+from lxml import html
+
 from odoo.tests.common import TransactionCase
+
+from odoo.addons.template_content_swapper.models.ir_qweb import ARTICLE_XPATH
 
 
 class TestTemplateStringSwapper(TransactionCase):
@@ -63,6 +67,37 @@ class TestTemplateStringSwapper(TransactionCase):
         result = self._render_report_html(lang="ja_JP")
         self.assertFalse("ページ" in str(result))
         self.assertTrue("スライド" in str(result))
+
+    def test_apply_article_mappings_multi_record(self):
+        # Multi-record render path: a domain mapping must be applied only to
+        # the article block(s) whose record matches the domain, leaving the
+        # other records untouched.
+        mapping = self._create_mapping(
+            domain="[('id', '=', 1)]",
+            content_from="Page",
+            content_to="Slide",
+            lang="en_US",
+        )
+        html_str = (
+            "<html><body>"
+            '<div class="article" data-oe-model="res.company" data-oe-id="1">'
+            "<p>Page one</p></div>"
+            '<div class="article" data-oe-model="res.company" data-oe-id="2">'
+            "<p>Page two</p></div>"
+            "</body></html>"
+        )
+        root = html.fromstring(html_str)
+        articles = root.xpath(ARTICLE_XPATH)
+        self.assertEqual(len(articles), 2)
+        # Only record 1 matches the domain.
+        match_map = {mapping.id: {1}}
+        self.env["ir.qweb"]._apply_article_mappings(articles, mapping, match_map)
+        result = html.tostring(root, encoding="unicode")
+        self.assertIn("Slide one", result)
+        self.assertNotIn("Page one", result)
+        # Record 2 does not match → left as-is.
+        self.assertIn("Page two", result)
+        self.assertNotIn("Slide two", result)
 
     def test_template_string_swapper_with_domain(self):
         test_company = self.env["res.company"].create({"name": "Test Company"})
