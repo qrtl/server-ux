@@ -7,7 +7,7 @@ import re
 from lxml import etree, html
 from markupsafe import Markup
 
-from odoo import fields, models
+from odoo import api, fields, models
 from odoo.tools.safe_eval import safe_eval
 
 _logger = logging.getLogger(__name__)
@@ -69,6 +69,7 @@ class IrQWeb(models.AbstractModel):
                         article.get("data-oe-id"),
                     )
 
+    @api.model
     def _render(
         self,
         template: int | str | etree._Element,
