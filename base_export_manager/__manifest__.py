@@ -25,6 +25,8 @@
     "assets": {
         "web.assets_backend": [
             "base_export_manager/static/src/views/list/list_controller.esm.js",
+            "base_export_manager/static/src/views/pivot/pivot_renderer.esm.js",
+            "base_export_manager/static/src/views/pivot/pivot_controller.xml",
         ],
     },
     "installable": True,
